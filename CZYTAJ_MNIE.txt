@@ -1,29 +1,38 @@
 ============================================================
-   MOD do MECCHA CHAMELEON
-   (zmienia dzwiek gwizdu na "widzisz mnie?")
+   MOD DO GRY MECCHA CHAMELEON
+   Zmienia dzwiek gwizdu na "widzisz mnie?".
 ============================================================
 
-  JAK ZAINSTALOWAC - 3 KROKI:
+INSTALACJA
 
-  1) WYPAKUJ CALY ten ZIP do jednego folderu (np. na Pulpit).
-     >> NIE uruchamiaj exe z wnetrza ZIP-a! Najpierw wypakuj.
-     >> Obok Zainstaluj.exe MUSI byc folder "mod".
+  1. Wypakuj cala zawartosc tego archiwum ZIP do jednego folderu
+     (np. na pulpicie).
+     Wazne: nie uruchamiaj pliku .exe z wnetrza archiwum.
+     Najpierw wypakuj cala zawartosc. Obok pliku Zainstaluj.exe
+     musi znajdowac sie folder "mod".
 
-  2) Kliknij dwa razy:  Zainstaluj.exe   ->   przycisk ZAINSTALUJ
+  2. Uruchom plik Zainstaluj.exe i wybierz opcje Zainstaluj.
 
-  3) Gdy wyskoczy zielone "ZAINSTALOWANO POMYSLNIE" -> odpal gre. Gotowe!
+  3. Po komunikacie "ZAINSTALOWANO POMYSLNIE" uruchom gre.
 
 ------------------------------------------------------------
-  WINDOWS POKAZAL "OCHRONIL KOMPUTER"?
-  To normalne (mod niepodpisany). Kliknij:
-     "Wiecej informacji"  ->  "Uruchom mimo to"
+KOMUNIKAT "SYSTEM WINDOWS OCHRONIL KOMPUTER"
+
+  Pojawia sie, poniewaz plik nie jest podpisany cyfrowo.
+  Aby kontynuowac, wybierz "Wiecej informacji",
+  a nastepnie "Uruchom mimo to".
+
 ------------------------------------------------------------
-  ODINSTALOWANIE:
-     Zainstaluj.exe  ->  przycisk ODINSTALUJ
+ODINSTALOWANIE
+
+  Uruchom plik Zainstaluj.exe i wybierz opcje Odinstaluj.
+
 ------------------------------------------------------------
-  NIC SIE NIE ZMIENILO W GRZE?
-     Zamknij gre CALKOWICIE i odpal od nowa.
-  "NIE ZNALAZLEM GRY"?
-     Kliknij Przegladaj i wskaz folder gry
-     (Steam -> prawy klik na gre -> Zarzadzaj -> Przegladaj pliki lokalne)
+NAJCZESTSZE PROBLEMY
+
+  - Brak zmian w grze: zamknij gre calkowicie i uruchom ponownie.
+  - "Nie znalazlem gry": wybierz Przegladaj i wskaz folder gry
+    (Steam -> prawy przycisk myszy na grze -> Zarzadzaj ->
+     Przegladaj pliki lokalne).
+
 ============================================================

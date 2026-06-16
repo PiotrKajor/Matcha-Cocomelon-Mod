@@ -2,52 +2,49 @@
   <img src="logo.png" alt="Matcha Cocomelon Mod" width="420">
 </p>
 
-<h1 align="center">🎮 Mod do MECCHA CHAMELEON</h1>
+<h1 align="center">Mod do gry MECCHA CHAMELEON</h1>
 
-<p align="center"><b>Zmienia dźwięk gwizdu na „widzisz mnie?"</b> 🎺<br>
-(…i ma w środku małą niespodziankę 🤫)</p>
-
----
-
-## 📥 JAK ZAINSTALOWAĆ — 3 kroki
-
-### 1️⃣ Pobierz i **wypakuj cały ZIP**
-Pobierz ZIP z sekcji **[Releases](../../releases/latest)** → kliknij prawym → **„Wyodrębnij wszystko"** do jednego folderu (np. na Pulpit).
-
-> 🛑 **NAJWAŻNIEJSZE:** NIE uruchamiaj `.exe` z wnętrza ZIP-a! **Najpierw wypakuj cały folder.** Obok `Zainstaluj.exe` musi być folder `mod`.
-
-### 2️⃣ Uruchom `Zainstaluj.exe`
-Kliknij dwa razy **`Zainstaluj.exe`** → wybierz **[ Zainstaluj ]**.
-
-### 3️⃣ Gotowe ✅
-Gdy wyskoczy zielone **„ZAINSTALOWANO POMYSLNIE"** — **uruchom grę** i graj. 🎉
+<p align="center">Mod zmienia dźwięk gwizdu na „widzisz mnie?".</p>
 
 ---
 
-## ⚠️ Windows pokazał „System Windows ochronił komputer"?
-**Spokojnie, to normalne** (mod jest darmowy i niepodpisany). Zrób tak:
+## Instalacja
 
-**„Więcej informacji"** → **„Uruchom mimo to"** ✅
+### 1. Pobranie i wypakowanie
+Pobierz archiwum ZIP z sekcji **[Releases](../../releases/latest)**, a następnie wypakuj jego **całą zawartość** do jednego folderu (np. na pulpicie).
+
+> **Ważne:** nie uruchamiaj pliku `.exe` bezpośrednio z wnętrza archiwum. Najpierw wypakuj całą zawartość. Obok pliku `Zainstaluj.exe` musi znajdować się folder `mod`.
+
+### 2. Uruchomienie instalatora
+Uruchom plik **`Zainstaluj.exe`** i wybierz opcję **Zainstaluj**.
+
+### 3. Zakończenie
+Po wyświetleniu komunikatu **„ZAINSTALOWANO POMYSLNIE"** uruchom grę.
 
 ---
 
-## 🗑️ Jak odinstalować?
-Uruchom **`Zainstaluj.exe`** → wybierz **[ Odinstaluj ]**. Tyle.
+## Komunikat „System Windows ochronił komputer"
+Komunikat pojawia się, ponieważ plik nie jest podpisany cyfrowo. Aby kontynuować, wybierz **„Więcej informacji"**, a następnie **„Uruchom mimo to"**.
 
 ---
 
-## ❓ Coś nie pyka? (najczęstsze)
+## Odinstalowanie
+Uruchom plik **`Zainstaluj.exe`** i wybierz opcję **Odinstaluj**.
+
+---
+
+## Najczęstsze problemy
 | Problem | Rozwiązanie |
 |---|---|
-| Nic się nie zmieniło w grze | **Zamknij grę CAŁKOWICIE i odpal od nowa** (mod ładuje się przy starcie). |
-| „Nie znalazłem plików moda" | Wypakuj **cały** ZIP do jednego folderu (z folderem `mod` obok exe). |
-| „Nie znalazłem gry" | Kliknij **Przeglądaj** i wskaż folder gry. Znajdziesz go: Steam → prawy klik na grę → **Zarządzaj → Przeglądaj pliki lokalne**. |
-| Mod zniknął | Steam „Sprawdź integralność plików" usuwa mody. Zainstaluj ponownie. |
+| Brak zmian w grze | Zamknij grę całkowicie i uruchom ponownie — mod ładuje się przy starcie. |
+| Komunikat „Nie znalazłem plików moda" | Wypakuj całą zawartość archiwum do jednego folderu (folder `mod` musi znajdować się obok pliku `.exe`). |
+| Komunikat „Nie znalazłem gry" | Wybierz opcję **Przeglądaj** i wskaż folder gry. Lokalizację znajdziesz w aplikacji Steam: prawy przycisk myszy na grze → **Zarządzaj** → **Przeglądaj pliki lokalne**. |
+| Mod przestał działać | Weryfikacja integralności plików gry w Steam usuwa mody. Zainstaluj mod ponownie. |
 
 ---
 
-## ✅ Co jest potrzebne
-- Gra **MECCHA CHAMELEON** na Steam
-- Windows 10 / 11
+## Wymagania
+- Gra **MECCHA CHAMELEON** na platformie Steam
+- System Windows 10 lub 11
 
-<sub>Nieoficjalny mod fanowski. Nie psuje gry — można w każdej chwili odinstalować.</sub>
+<sub>Nieoficjalny mod fanowski. Mod można odinstalować w dowolnym momencie.</sub>
