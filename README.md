@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.png" alt="Match Cocomelon Mod" width="420">
+</p>
+
 # 🎺 widzisz mnie? — mod do MECCHA CHAMELEON
 
 Mały mod do gry **MECCHA CHAMELEON** (Steam), który **zmienia dźwięk gwizdu** na *„widzisz mnie?"*.
