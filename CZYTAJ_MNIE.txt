@@ -1,7 +1,6 @@
 ============================================================
   MOD "widzisz mnie?" do MECCHA CHAMELEON
-  - gwizd -> "widzisz mnie?"
-  - obrazy i plakaty na scianach podmienione
+  Zmienia dzwiek gwizdu na "widzisz mnie?"
 ============================================================
 
 INSTALACJA
