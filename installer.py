@@ -28,6 +28,13 @@ import platform
 
 IS_WINDOWS = os.name == "nt"
 
+# Znaki blokowe (█) wymagaja UTF-8 na stdout - inaczej stara konsola Windows
+# (cp1250) rzucilaby UnicodeEncodeError. errors="replace" = degradacja zamiast crasha.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
+
 
 def _enable_ansi_on_windows():
     """Wlacza obsluge sekwencji ANSI w konsoli Windows 10/11."""
@@ -58,6 +65,8 @@ class C:
     BOLD = "\033[1m"
     DIM = "\033[2m"
 
+    REVERSE = "\033[7m"
+
     GREEN = "\033[92m"
     RED = "\033[91m"
     CYAN = "\033[96m"
@@ -67,8 +76,6 @@ class C:
 
     # tla
     BG_GREEN = "\033[42m"
-    BG_RED = "\033[41m"
-    BG_BLACK = "\033[40m"
     BLACK = "\033[30m"
 
 
@@ -85,22 +92,28 @@ WIDTH = 64  # szerokosc ramki interfejsu
 #  Rysowanie interfejsu
 # --------------------------------------------------------------------------- #
 
-# Wielkie napisy w stylu blokowym (OK / ERROR), 5-liniowe, monospaced.
-_BIG_OK = [
-    "  ___  _  __",
-    " / _ \\| |/ /",
-    "| | | | ' / ",
-    "| |_| | . \\ ",
-    " \\___/|_|\\_\\",
-]
+# Pikselowa czcionka blokowa - wielkie napisy jak na ekranie testu pamieci.
+# Glify 5x7; '#' = piksel wlaczony. Renderowane pelnymi blokami (██).
+_FONT = {
+    "O": [" ### ", "#   #", "#   #", "#   #", "#   #", "#   #", " ### "],
+    "K": ["#   #", "#  # ", "# #  ", "##   ", "# #  ", "#  # ", "#   #"],
+    "E": ["#####", "#    ", "#    ", "#### ", "#    ", "#    ", "#####"],
+    "R": ["#### ", "#   #", "#   #", "#### ", "# #  ", "#  # ", "#   #"],
+}
+_FONT_ROWS = 7
 
-_BIG_ERROR = [
-    " _____ ____  ____   ___  ____  ",
-    "| ____|  _ \\|  _ \\ / _ \\|  _ \\ ",
-    "|  _| | |_) | |_) | | | | |_) |",
-    "| |___|  _ <|  _ <| |_| |  _ < ",
-    "|_____|_| \\_\\_| \\_\\\\___/|_| \\_\\",
-]
+
+def _render_word(word, on="██", off="  ", gap="  "):
+    """Sklada wyraz z pikselowych glifow w liste 7 wierszy (poziomo x2)."""
+    rows = []
+    for r in range(_FONT_ROWS):
+        parts = ["".join(on if c == "#" else off for c in _FONT[ch][r]) for ch in word]
+        rows.append(gap.join(parts))
+    return rows
+
+
+_BIG_OK = _render_word("OK")
+_BIG_ERROR = _render_word("ERROR")
 
 
 def clear_screen():
@@ -132,19 +145,29 @@ def info_row(label, value, ok=None):
 
 
 def big_box(lines, color, subtitle):
-    """Wielka ramka z napisem OK/ERROR na srodku ekranu."""
-    inner_w = max(max(len(l) for l in lines), len(subtitle)) + 8
-    pad = " " * inner_w
-    border = color + "+" + "-" * inner_w + "+" + C.RESET
+    """Pikselowa ramka (z blokow) z napisem OK/ERROR, wysrodkowana na ekranie."""
+    term_w = shutil.get_terminal_size((WIDTH + 6, 24)).columns
+    content_w = max(max(len(l) for l in lines), len(subtitle))
+    inner_w = content_w + 6
+    side = "██"  # pionowa krawedz ramki, grubosc dopasowana do pikseli liter
+    box_w = inner_w + 2 * len(side)
+    margin = " " * max(0, (term_w - box_w) // 2)
+
+    top = color + "█" * box_w + C.RESET
+    blank = color + side + " " * inner_w + side + C.RESET
+
+    def framed(inner):
+        # tresc miedzy pionowymi krawedziami ramki
+        print(margin + color + side + C.RESET + inner + color + side + C.RESET)
+
     print()
-    print("   " + border)
-    print("   " + color + "|" + pad + "|" + C.RESET)
+    print(margin + top)
+    print(margin + blank)
     for l in lines:
-        centered = l.center(inner_w)
-        print("   " + color + "|" + C.BOLD + centered + C.RESET + color + "|" + C.RESET)
-    print("   " + color + "|" + pad + "|" + C.RESET)
-    print("   " + color + "|" + C.RESET + subtitle.center(inner_w) + color + "|" + C.RESET)
-    print("   " + border)
+        framed(color + C.BOLD + l.center(inner_w) + C.RESET)
+    print(margin + blank)
+    framed(subtitle.center(inner_w))
+    print(margin + top)
     print()
 
 
@@ -232,6 +255,7 @@ def _steam_roots_windows():
     for base in (pfx86, pf):
         roots.append(os.path.join(base, "Steam"))
     for drive in _windows_drives():
+        roots.append(drive)  # biblioteka moze byc wprost w korzeniu dysku (D:\steamapps\...)
         roots.append(os.path.join(drive, "Steam"))
         roots.append(os.path.join(drive, "SteamLibrary"))
         roots.append(os.path.join(drive, "Games", "Steam"))
@@ -354,17 +378,18 @@ def get_target_paks(interactive=True):
     paks = detect_paks_dir()
     if paks:
         return paks
+    if interactive and UI_TUI:
+        return tui_pick_directory()
     if interactive:
         return ask_manual_path()
     return None
 
 
 def do_install(interactive=True):
-    banner("Instalacja moda - zmiana dzwieku gwizdu")
-
     mod_dir = find_mod_dir()
-    info_row("System", f"{platform.system()} {platform.release()}")
     if not mod_dir:
+        banner("Instalacja moda - zmiana dzwieku gwizdu")
+        info_row("System", f"{platform.system()} {platform.release()}")
         info_row("Pliki moda", "NIE ZNALEZIONO", ok=False)
         hr()
         print(f"{C.RED}Nie znalazlem plikow moda.{C.RESET}")
@@ -374,9 +399,14 @@ def do_install(interactive=True):
         return 1
 
     mod_files = list_mod_files(mod_dir)
-    info_row("Pliki moda", f"{len(mod_files)} plikow", ok=True)
 
+    # Najpierw ustalamy folder gry (moze otworzyc przegladarke czyszczaca ekran),
+    # a dopiero potem rysujemy czysty ekran podsumowania.
     target = get_target_paks(interactive)
+
+    banner("Instalacja moda - zmiana dzwieku gwizdu")
+    info_row("System", f"{platform.system()} {platform.release()}")
+    info_row("Pliki moda", f"{len(mod_files)} plikow", ok=True)
     if not target:
         info_row("Folder gry", "NIE ZNALEZIONO", ok=False)
         hr()
@@ -415,16 +445,15 @@ def do_install(interactive=True):
 
 
 def do_uninstall(interactive=True):
-    banner("Odinstalowanie moda - powrot do oryginalu")
-
     mod_dir = find_mod_dir()
     mod_names = (
         {os.path.basename(f) for f in list_mod_files(mod_dir)} if mod_dir else None
     )
 
-    info_row("System", f"{platform.system()} {platform.release()}")
-
     target = get_target_paks(interactive)
+
+    banner("Odinstalowanie moda - powrot do oryginalu")
+    info_row("System", f"{platform.system()} {platform.release()}")
     if not target:
         info_row("Folder gry", "NIE ZNALEZIONO", ok=False)
         hr()
@@ -465,7 +494,369 @@ def do_uninstall(interactive=True):
 
 
 # --------------------------------------------------------------------------- #
-#  Menu
+#  Interaktywny interfejs (TUI): nawigacja strzalkami, przyciski, przegladarka
+# --------------------------------------------------------------------------- #
+
+UI_TUI = False  # ustawiane w main(), gdy terminal jest interaktywny
+
+
+def read_key():
+    """Czyta pojedynczy klawisz i normalizuje go.
+
+    Zwraca: 'UP','DOWN','LEFT','RIGHT','ENTER','ESC','SPACE','BACK' lub znak.
+    """
+    if IS_WINDOWS:
+        import msvcrt
+
+        ch = msvcrt.getwch()
+        if ch in ("\x00", "\xe0"):
+            code = msvcrt.getwch()
+            return {"H": "UP", "P": "DOWN", "K": "LEFT", "M": "RIGHT"}.get(code, "")
+        if ch in ("\r", "\n"):
+            return "ENTER"
+        if ch == "\x1b":
+            return "ESC"
+        if ch == "\x03":
+            raise KeyboardInterrupt
+        if ch in ("\x08", "\x7f"):
+            return "BACK"
+        if ch == " ":
+            return "SPACE"
+        return ch
+
+    import termios
+    import tty
+    import select
+
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        ch = sys.stdin.read(1)
+        if ch == "\x1b":
+            # rozroznienie: samo ESC vs sekwencja strzalki. 50 ms jest niewidoczne
+            # przy wcisnieciu Esc, a pewnie laczy bajty sekwencji (tez przez SSH).
+            if select.select([sys.stdin], [], [], 0.05)[0]:
+                seq = sys.stdin.read(1)
+                if seq in ("[", "O"):
+                    code = sys.stdin.read(1)
+                    return {"A": "UP", "B": "DOWN", "C": "RIGHT", "D": "LEFT"}.get(code, "")
+            return "ESC"
+        if ch in ("\r", "\n"):
+            return "ENTER"
+        if ch == "\x03":
+            raise KeyboardInterrupt
+        if ch in ("\x08", "\x7f"):
+            return "BACK"
+        if ch == " ":
+            return "SPACE"
+        return ch
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+
+
+def term_width():
+    return shutil.get_terminal_size((WIDTH + 6, 24)).columns
+
+
+def _clear():
+    sys.stdout.write("\033[H\033[2J")
+
+
+def _print_centered(text, vis_len, tw=None):
+    tw = tw or term_width()
+    print(" " * max(0, (tw - vis_len) // 2) + text)
+
+
+def _trunc(s, n):
+    if len(s) <= n:
+        return s
+    return "..." + s[-(n - 3):] if n > 3 else s[:n]
+
+
+def _button(label, focused):
+    """Zwraca 3 linie ramki przycisku oraz jego widoczna szerokosc."""
+    bw = len(label) + 6
+    text = label.center(bw)
+    if focused:
+        top = C.GREEN + "┏" + "━" * bw + "┓" + C.RESET
+        mid = (C.GREEN + "┃" + C.BG_GREEN + C.BLACK + C.BOLD + text
+               + C.RESET + C.GREEN + "┃" + C.RESET)
+        bot = C.GREEN + "┗" + "━" * bw + "┛" + C.RESET
+    else:
+        top = C.GREY + "┌" + "─" * bw + "┐" + C.RESET
+        mid = C.GREY + "│" + C.RESET + C.WHITE + text + C.GREY + "│" + C.RESET
+        bot = C.GREY + "└" + "─" * bw + "┘" + C.RESET
+    return (top, mid, bot), bw + 2
+
+
+def _draw_header(tw):
+    title = " MATCHA COCOMELON MOD  —  INSTALATOR v2.0 "
+    bar = C.BG_GREEN + C.BLACK + C.BOLD + title.center(44) + C.RESET
+    print()
+    _print_centered(bar, 44, tw)
+    print()
+
+
+def _draw_info_panel(tw, paks):
+    rows = [
+        ("System", f"{platform.system()} {platform.release()}", C.WHITE),
+        ("Mod", 'dzwiek gwizdu -> "widzisz mnie?"', C.WHITE),
+        ("Gra", paks if paks else "wykryje przy instalacji",
+         C.GREEN if paks else C.YELLOW),
+    ]
+    inner = 44
+    plain = [f"{lab+':':<12}{_trunc(val, inner-12)}" for lab, val, _ in rows]
+    block_w = max(len(p) for p in plain)
+    margin = " " * max(0, (tw - block_w) // 2)
+    for lab, val, col in rows:
+        print(margin + f"{C.CYAN}{lab+':':<12}{C.RESET}{col}{_trunc(val, inner-12)}{C.RESET}")
+    print(margin + C.GREY + "─" * block_w + C.RESET)
+
+
+def tui_menu():
+    """Glowne menu z przyciskami. Petla az do wyjscia."""
+    labels = ["ZAINSTALUJ", "ODINSTALUJ", "WYJSCIE"]
+    sel = 0
+    while True:
+        tw = term_width()
+        _clear()
+        _draw_header(tw)
+        _draw_info_panel(tw, detect_paks_dir())
+        print()
+
+        btns = [_button(lab, i == sel) for i, lab in enumerate(labels)]
+        gap = "   "
+        vis = sum(w for _, w in btns) + len(gap) * (len(btns) - 1)
+        for line_idx in range(3):
+            row = gap.join(b[0][line_idx] for b in btns)
+            _print_centered(row, vis, tw)
+        print()
+        hint = (f"{C.DIM}←/→ wybor    Enter zatwierdz    Esc wyjscie{C.RESET}")
+        _print_centered(hint, len("←/→ wybor    Enter zatwierdz    Esc wyjscie"), tw)
+        sys.stdout.flush()
+
+        try:
+            k = read_key()
+        except KeyboardInterrupt:
+            return 0
+
+        if k in ("LEFT", "UP"):
+            sel = (sel - 1) % len(labels)
+        elif k in ("RIGHT", "DOWN"):
+            sel = (sel + 1) % len(labels)
+        elif k in ("1",):
+            sel = 0
+        elif k in ("2",):
+            sel = 1
+        elif k in ("0", "q", "Q"):
+            return 0
+        elif k == "ESC":
+            return 0
+        elif k == "ENTER":
+            if sel == 0:
+                do_install(interactive=True)
+                wait_for_button()
+            elif sel == 1:
+                do_uninstall(interactive=True)
+                wait_for_button()
+            else:
+                return 0
+
+
+def wait_for_button(label="Powrot do menu"):
+    """Rysuje wysrodkowany, podswietlony przycisk i czeka na Enter/Esc."""
+    if not UI_TUI:
+        return
+    tw = term_width()
+    (top, mid, bot), vis = _button(label, True)
+    print()
+    _print_centered(top, vis, tw)
+    _print_centered(mid, vis, tw)
+    _print_centered(bot, vis, tw)
+    _print_centered(f"{C.DIM}Enter / Esc{C.RESET}", len("Enter / Esc"), tw)
+    sys.stdout.flush()
+    while True:
+        try:
+            k = read_key()
+        except KeyboardInterrupt:
+            return
+        if k in ("ENTER", "ESC", "SPACE"):
+            return
+
+
+# ----  Przegladarka folderow (zamiast wpisywania sciezki)  ---------------- #
+
+DRIVES = "::DRIVES::"
+
+
+def _is_drive_root(p):
+    return IS_WINDOWS and bool(re.match(r"^[A-Za-z]:[\\/]?$", p or ""))
+
+
+def _parent(p):
+    if _is_drive_root(p):
+        return None
+    par = os.path.dirname(p.rstrip("\\/"))
+    if not par or par == p:
+        return None
+    return par
+
+
+def _initial_browse_dir():
+    roots = _steam_roots_windows() if IS_WINDOWS else _steam_roots_linux()
+    for r in roots:
+        if r and os.path.isdir(r):
+            return r
+    return os.path.expanduser("~")
+
+
+def _subdirs(cur):
+    try:
+        names = [e.name for e in os.scandir(cur) if e.is_dir()]
+    except OSError:
+        return []
+    return sorted(names, key=str.lower)
+
+
+def _dir_entries(cur):
+    """Buduje liste pozycji przegladarki dla danego folderu."""
+    entries = []
+    if cur == DRIVES:
+        entries.append({"label": "Wybierz dysk / lokalizacje:",
+                        "color": C.GREY, "action": "sep", "sel": False})
+        for d in _windows_drives():
+            entries.append({"label": "  [Dysk]  " + d, "color": C.WHITE,
+                            "action": "dir", "payload": d, "sel": True})
+        home = os.path.expanduser("~")
+        entries.append({"label": "  [Folder domowy]  " + home, "color": C.WHITE,
+                        "action": "dir", "payload": home, "sel": True})
+        return entries
+
+    entries.append({"label": "> Zainstaluj w TYM folderze", "color": C.GREEN,
+                    "action": "choose", "sel": True})
+    if _is_drive_root(cur) and IS_WINDOWS:
+        entries.append({"label": ".. (inne dyski)", "color": C.CYAN,
+                        "action": "drives", "sel": True})
+    elif _parent(cur) is not None:
+        entries.append({"label": ".. (folder wyzej)", "color": C.CYAN,
+                        "action": "up", "sel": True})
+
+    subs = _subdirs(cur)
+    entries.append({"label": f"podfoldery ({len(subs)}):", "color": C.GREY,
+                    "action": "sep", "sel": False})
+    for name in subs:
+        entries.append({"label": "  " + name, "color": C.WHITE, "action": "dir",
+                        "payload": os.path.join(cur, name), "sel": True})
+    if not subs:
+        entries.append({"label": "  (brak podfolderow)", "color": C.DIM,
+                        "action": "sep", "sel": False})
+    return entries
+
+
+def _first_sel(entries):
+    for i, e in enumerate(entries):
+        if e.get("sel"):
+            return i
+    return 0
+
+
+def _move_sel(entries, idx, step):
+    n = len(entries)
+    for _ in range(n):
+        idx = (idx + step) % n
+        if entries[idx].get("sel"):
+            return idx
+    return idx
+
+
+def _list_select(title, subtitle, entries, warn=None):
+    """Pionowa lista z przewijaniem. Zwraca wybrana pozycje albo None (Esc).
+
+    Skroty: strzalka w lewo / Backspace => zwraca pozycje akcji 'up'/'drives'.
+    """
+    idx = _first_sel(entries)
+    view = 14
+    while True:
+        tw = term_width()
+        inner = min(60, max(30, tw - 8))
+        _clear()
+        print()
+        _print_centered(C.BG_GREEN + C.BLACK + C.BOLD + (" " + title + " ").center(inner)
+                        + C.RESET, inner, tw)
+        _print_centered(C.CYAN + _trunc(subtitle, inner) + C.RESET,
+                        len(_trunc(subtitle, inner)), tw)
+        if warn:
+            _print_centered(C.YELLOW + _trunc(warn, inner) + C.RESET,
+                            len(_trunc(warn, inner)), tw)
+        _print_centered(C.GREY + "─" * inner + C.RESET, inner, tw)
+
+        start = 0
+        if len(entries) > view:
+            start = min(max(0, idx - view // 2), len(entries) - view)
+        for i in range(start, min(start + view, len(entries))):
+            e = entries[i]
+            label = _trunc(e["label"], inner - 2)
+            field = (" " + label).ljust(inner)
+            if i == idx and e.get("sel"):
+                line = C.BG_GREEN + C.BLACK + C.BOLD + field + C.RESET
+            else:
+                line = e["color"] + field + C.RESET
+            _print_centered(line, inner, tw)
+
+        _print_centered(C.GREY + "─" * inner + C.RESET, inner, tw)
+        hint = "↑/↓ wybor   Enter otworz/wybierz   ←/Backspace wyzej   Esc anuluj"
+        _print_centered(C.DIM + _trunc(hint, inner) + C.RESET,
+                        len(_trunc(hint, inner)), tw)
+        sys.stdout.flush()
+
+        try:
+            k = read_key()
+        except KeyboardInterrupt:
+            return None
+
+        if k == "UP":
+            idx = _move_sel(entries, idx, -1)
+        elif k == "DOWN":
+            idx = _move_sel(entries, idx, +1)
+        elif k == "ENTER":
+            if entries[idx].get("sel"):
+                return entries[idx]
+        elif k in ("LEFT", "BACK"):
+            for e in entries:
+                if e["action"] in ("up", "drives"):
+                    return e
+        elif k == "ESC":
+            return None
+
+
+def tui_pick_directory():
+    """Interaktywny wybor folderu gry. Zwraca sciezke Paks albo None."""
+    cur = _initial_browse_dir()
+    warn = None
+    while True:
+        entries = _dir_entries(cur)
+        chosen = _list_select("Wskaz folder gry MECCHA CHAMELEON", cur, entries, warn)
+        warn = None
+        if chosen is None:
+            return None
+        act = chosen["action"]
+        if act == "choose":
+            paks = resolve_paks_from_user_path(cur)
+            if paks:
+                return paks
+            warn = "Brak plikow gry tutaj - wejdz do folderu MECCHA CHAMELEON."
+        elif act == "up":
+            par = _parent(cur)
+            cur = par if par is not None else cur
+        elif act == "drives":
+            cur = DRIVES
+        elif act == "dir":
+            cur = chosen["payload"]
+
+
+# --------------------------------------------------------------------------- #
+#  Menu (tryb nieinteraktywny / fallback bez TTY)
 # --------------------------------------------------------------------------- #
 
 
@@ -493,16 +884,35 @@ def menu():
     return 0
 
 
+def _interactive_tty():
+    try:
+        return bool(_ANSI_OK and sys.stdin.isatty() and sys.stdout.isatty())
+    except Exception:
+        return False
+
+
 def main(argv):
+    global UI_TUI
     args = [a.lower() for a in argv[1:]]
     if "/install" in args or "--install" in args:
-        code = do_install(interactive=True)
-    elif "/uninstall" in args or "--uninstall" in args:
-        code = do_uninstall(interactive=True)
-    else:
-        code = menu()
+        return do_install(interactive=True)
+    if "/uninstall" in args or "--uninstall" in args:
+        return do_uninstall(interactive=True)
 
-    # Pod Windowsem konsola (uruchomiona dwuklikiem) zamyka sie od razu.
+    if _interactive_tty():
+        UI_TUI = True
+        try:
+            code = tui_menu()
+        except KeyboardInterrupt:
+            code = 0
+        finally:
+            _clear()
+            sys.stdout.write("\033[0m")
+            sys.stdout.flush()
+        return code
+
+    # Fallback: brak interaktywnego terminala (potok, przekierowanie).
+    code = menu()
     if IS_WINDOWS and sys.stdin and sys.stdin.isatty():
         try:
             input(f"\n{C.DIM}Nacisnij Enter, aby zamknac...{C.RESET}")

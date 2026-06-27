@@ -8,7 +8,7 @@
 
 ---
 
-Instalator jest **wieloplatformowy** — działa pod **Windows** i **Linux** (Steam / Steam Proton). Ma retro wygląd terminala w stylu testu pamięci (zielony **PASS**, czerwony **FAIL**).
+Instalator jest **wieloplatformowy** — działa pod **Windows** i **Linux** (Steam / Steam Proton). Ma retro wygląd terminala w stylu testu pamięci (zielona ramka **OK**, czerwona **ERROR**).
 
 ## Instalacja
 
@@ -53,8 +53,8 @@ Uruchom instalator tak samo jak przy instalacji i wybierz opcję **Odinstaluj** 
 | Problem | Rozwiązanie |
 |---|---|
 | Brak zmian w grze | Zamknij grę całkowicie i uruchom ponownie — mod ładuje się przy starcie. |
-| Komunikat „Nie znalazłem plików moda" | Wypakuj całą zawartość archiwum do jednego folderu (folder `mod` musi znajdować się obok pliku `.exe`). |
-| Komunikat „Nie znalazłem gry" | Wybierz opcję **Przeglądaj** i wskaż folder gry. Lokalizację znajdziesz w aplikacji Steam: prawy przycisk myszy na grze → **Zarządzaj** → **Przeglądaj pliki lokalne**. |
+| Komunikat „Nie znalazłem plików moda" | Wypakuj całą zawartość archiwum do jednego folderu (folder `mod` musi znajdować się obok instalatora). |
+| Komunikat „Nie znalazłem gry" | Gdy instalator o to poprosi, wpisz lub wklej ścieżkę do folderu gry. Lokalizację znajdziesz w aplikacji Steam: prawy przycisk myszy na grze → **Zarządzaj** → **Przeglądaj pliki lokalne**. |
 | Mod przestał działać | Weryfikacja integralności plików gry w Steam usuwa mody. Zainstaluj mod ponownie. |
 
 ---
