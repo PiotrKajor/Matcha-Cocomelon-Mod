@@ -85,21 +85,21 @@ WIDTH = 64  # szerokosc ramki interfejsu
 #  Rysowanie interfejsu
 # --------------------------------------------------------------------------- #
 
-# Wielkie napisy w stylu blokowym (PASS / FAIL), 5-liniowe, monospaced.
-_BIG_PASS = [
-    "  ____    _    ____  ____  ",
-    " |  _ \\  / \\  / ___|/ ___| ",
-    " | |_) |/ _ \\ \\___ \\\\___ \\ ",
-    " |  __// ___ \\ ___) |___) |",
-    " |_|  /_/   \\_\\____/|____/ ",
+# Wielkie napisy w stylu blokowym (OK / ERROR), 5-liniowe, monospaced.
+_BIG_OK = [
+    "  ___  _  __",
+    " / _ \\| |/ /",
+    "| | | | ' / ",
+    "| |_| | . \\ ",
+    " \\___/|_|\\_\\",
 ]
 
-_BIG_FAIL = [
-    "  _____ _    ___ _     ",
-    " |  ___/ \\  |_ _| |    ",
-    " | |_ / _ \\  | || |    ",
-    " |  _/ ___ \\ | || |___ ",
-    " |_|/_/   \\_\\___|_____|",
+_BIG_ERROR = [
+    " _____ ____  ____   ___  ____  ",
+    "| ____|  _ \\|  _ \\ / _ \\|  _ \\ ",
+    "|  _| | |_) | |_) | | | | |_) |",
+    "| |___|  _ <|  _ <| |_| |  _ < ",
+    "|_____|_| \\_\\_| \\_\\\\___/|_| \\_\\",
 ]
 
 
@@ -132,8 +132,8 @@ def info_row(label, value, ok=None):
 
 
 def big_box(lines, color, subtitle):
-    """Wielka ramka z napisem PASS/FAIL na srodku ekranu."""
-    inner_w = max(len(l) for l in lines) + 8
+    """Wielka ramka z napisem OK/ERROR na srodku ekranu."""
+    inner_w = max(max(len(l) for l in lines), len(subtitle)) + 8
     pad = " " * inner_w
     border = color + "+" + "-" * inner_w + "+" + C.RESET
     print()
@@ -148,12 +148,12 @@ def big_box(lines, color, subtitle):
     print()
 
 
-def pass_box(subtitle="Test complete, mod aktywny"):
-    big_box(_BIG_PASS, C.GREEN, subtitle)
+def ok_box(subtitle="Operacja zakonczona pomyslnie"):
+    big_box(_BIG_OK, C.GREEN, subtitle)
 
 
-def fail_box(subtitle="Operacja przerwana"):
-    big_box(_BIG_FAIL, C.RED, subtitle)
+def error_box(subtitle="Operacja przerwana"):
+    big_box(_BIG_ERROR, C.RED, subtitle)
 
 
 # --------------------------------------------------------------------------- #
@@ -370,7 +370,7 @@ def do_install(interactive=True):
         print(f"{C.RED}Nie znalazlem plikow moda.{C.RESET}")
         print("Upewnij sie, ze obok programu jest folder 'mod' z plikami")
         print("*_P.utoc / *_P.ucas / *_P.pak (rozpakuj caly ZIP do jednego folderu).")
-        fail_box("Brak plikow moda")
+        error_box("Brak plikow moda")
         return 1
 
     mod_files = list_mod_files(mod_dir)
@@ -383,7 +383,7 @@ def do_install(interactive=True):
         print(f"{C.RED}PRZERWANO - nie znaleziono folderu gry.{C.RESET}")
         print("Recznie skopiuj pliki *_P.* do:")
         print(f"{C.DIM}   ...{os.sep}{GAME_NAME}{os.sep}Chameleon{os.sep}Content{os.sep}Paks{C.RESET}")
-        fail_box("Brak folderu gry")
+        error_box("Brak folderu gry")
         return 1
 
     info_row("Folder gry", target, ok=True)
@@ -402,7 +402,7 @@ def do_install(interactive=True):
         hr()
         print(f"{C.RED}BLAD: {exc}{C.RESET}")
         print("Byc moze gra jest uruchomiona albo brak uprawnien do zapisu.")
-        fail_box("Blad zapisu")
+        error_box("Blad zapisu")
         return 1
 
     hr()
@@ -410,7 +410,7 @@ def do_install(interactive=True):
     print(f"{C.DIM}   {target}{C.RESET}")
     print(f'{C.WHITE}Dzwiek gwizdu zmieniony na "widzisz mnie?".{C.RESET}')
     print(f"{C.WHITE}Uruchom gre i sprawdz (jak byla wlaczona - zrestartuj).{C.RESET}")
-    pass_box("MOD ZAINSTALOWANY POMYSLNIE!")
+    ok_box("MOD ZAINSTALOWANY POMYSLNIE!")
     return 0
 
 
@@ -429,7 +429,7 @@ def do_uninstall(interactive=True):
         info_row("Folder gry", "NIE ZNALEZIONO", ok=False)
         hr()
         print(f"{C.RED}PRZERWANO - nie znaleziono folderu gry.{C.RESET}")
-        fail_box("Brak folderu gry")
+        error_box("Brak folderu gry")
         return 1
 
     info_row("Folder gry", target, ok=True)
@@ -453,14 +453,14 @@ def do_uninstall(interactive=True):
         hr()
         print(f"{C.RED}BLAD: {exc}{C.RESET}")
         print("Byc moze gra jest uruchomiona albo brak uprawnien do zapisu.")
-        fail_box("Blad usuwania")
+        error_box("Blad usuwania")
         return 1
 
     hr()
     print(f"{C.GREEN}Usunieto plikow: {removed}{C.RESET}")
     print(f"{C.WHITE}Gwizd wrocil do oryginalu.{C.RESET}")
     print(f"{C.DIM}Folder: {target}{C.RESET}")
-    pass_box("MOD ODINSTALOWANY")
+    ok_box("MOD ODINSTALOWANY")
     return 0
 
 
