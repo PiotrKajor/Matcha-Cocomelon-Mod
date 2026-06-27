@@ -507,14 +507,30 @@ def read_key():
     """
     if IS_WINDOWS:
         import msvcrt
+        import time
+
+        def _wait_kbhit(budget=0.03):
+            end = time.time() + budget
+            while not msvcrt.kbhit() and time.time() < end:
+                time.sleep(0.002)
+            return msvcrt.kbhit()
 
         ch = msvcrt.getwch()
+        # Stary format konsoli: klawisze specjalne jako \x00/\xe0 + kod.
         if ch in ("\x00", "\xe0"):
             code = msvcrt.getwch()
             return {"H": "UP", "P": "DOWN", "K": "LEFT", "M": "RIGHT"}.get(code, "")
         if ch in ("\r", "\n"):
             return "ENTER"
         if ch == "\x1b":
+            # Nowsze terminale (Windows Terminal, Git Bash) wysylaja strzalki
+            # jako sekwencje VT: \x1b[ A/B/C/D lub \x1bO.... Samo Esc = brak dalej.
+            if _wait_kbhit():
+                seq = msvcrt.getwch()
+                if seq in ("[", "O"):
+                    code = msvcrt.getwch() if _wait_kbhit() else ""
+                    return {"A": "UP", "B": "DOWN", "C": "RIGHT", "D": "LEFT"}.get(code, "")
+                return ""
             return "ESC"
         if ch == "\x03":
             raise KeyboardInterrupt
