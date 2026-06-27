@@ -3,36 +3,56 @@
    Zmienia dzwiek gwizdu na "widzisz mnie?".
 ============================================================
 
+Instalator dziala pod Windows i Linux (Steam / Proton).
+Ma retro wyglad terminala: zielony PASS, czerwony FAIL.
+
 INSTALACJA
 
   1. Wypakuj cala zawartosc tego archiwum ZIP do jednego folderu
      (np. na pulpicie).
-     Wazne: nie uruchamiaj pliku .exe z wnetrza archiwum.
-     Najpierw wypakuj cala zawartosc. Obok pliku Zainstaluj.exe
+     Wazne: najpierw wypakuj cala zawartosc. Obok instalatora
      musi znajdowac sie folder "mod".
 
-  2. Uruchom plik Zainstaluj.exe i wybierz opcje Zainstaluj.
+  2. Uruchom instalator:
 
-  3. Po komunikacie "ZAINSTALOWANO POMYSLNIE" uruchom gre.
+     WINDOWS:
+       - dwuklik na Zainstaluj.bat  (wymaga Pythona 3 z python.org;
+         przy instalacji zaznacz "Add Python to PATH"),
+       - albo uruchom Zainstaluj.exe (nie wymaga Pythona).
+
+     LINUX (w terminalu w folderze moda):
+       ./zainstaluj.sh
+       (lub: python3 installer.py)
+
+  3. Wybierz opcje Zainstaluj (1).
+     Po zielonym komunikacie "MOD ZAINSTALOWANY POMYSLNIE"
+     uruchom gre.
+
+  Mozna tez pominac menu argumentem:
+     installer.py /install
+     installer.py /uninstall
 
 ------------------------------------------------------------
 KOMUNIKAT "SYSTEM WINDOWS OCHRONIL KOMPUTER"
 
-  Pojawia sie, poniewaz plik nie jest podpisany cyfrowo.
+  Moze sie pojawic, poniewaz plik nie jest podpisany cyfrowo.
   Aby kontynuowac, wybierz "Wiecej informacji",
   a nastepnie "Uruchom mimo to".
 
 ------------------------------------------------------------
 ODINSTALOWANIE
 
-  Uruchom plik Zainstaluj.exe i wybierz opcje Odinstaluj.
+  Uruchom instalator tak samo jak przy instalacji
+  i wybierz opcje Odinstaluj (2).
 
 ------------------------------------------------------------
 NAJCZESTSZE PROBLEMY
 
   - Brak zmian w grze: zamknij gre calkowicie i uruchom ponownie.
-  - "Nie znalazlem gry": wybierz Przegladaj i wskaz folder gry
+  - "Nie znalazlem gry": wpisz/wklej sciezke do folderu gry
     (Steam -> prawy przycisk myszy na grze -> Zarzadzaj ->
      Przegladaj pliki lokalne).
+  - "Nie znalazlem Pythona": zainstaluj Pythona 3
+    (Windows: python.org; Linux: menedzer pakietow dystrybucji).
 
 ============================================================
