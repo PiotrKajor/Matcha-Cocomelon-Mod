@@ -8,28 +8,44 @@
 
 ---
 
+Instalator jest **wieloplatformowy** — działa pod **Windows** i **Linux** (Steam / Steam Proton). Ma retro wygląd terminala w stylu testu pamięci (zielony **PASS**, czerwony **FAIL**).
+
 ## Instalacja
 
 ### 1. Pobranie i wypakowanie
 Pobierz archiwum ZIP z sekcji **[Releases](../../releases/latest)**, a następnie wypakuj jego **całą zawartość** do jednego folderu (np. na pulpicie).
 
-> **Ważne:** nie uruchamiaj pliku `.exe` bezpośrednio z wnętrza archiwum. Najpierw wypakuj całą zawartość. Obok pliku `Zainstaluj.exe` musi znajdować się folder `mod`.
+> **Ważne:** najpierw wypakuj całą zawartość archiwum. Obok instalatora musi znajdować się folder `mod`.
 
 ### 2. Uruchomienie instalatora
-Uruchom plik **`Zainstaluj.exe`** i wybierz opcję **Zainstaluj**.
+
+**Windows**
+- Dwuklik na **`Zainstaluj.bat`** (wymaga zainstalowanego [Pythona 3](https://www.python.org/downloads/) — przy instalacji zaznacz *„Add Python to PATH"*), **albo**
+- uruchom samodzielny **`Zainstaluj.exe`** (nie wymaga Pythona).
+
+**Linux**
+- W terminalu w folderze moda:
+  ```bash
+  ./zainstaluj.sh
+  ```
+  (lub `python3 installer.py`).
+
+Następnie wybierz opcję **Zainstaluj** (`1`). Instalator sam wyszukuje grę w bibliotekach Steam; jeśli jej nie znajdzie, poprosi o wskazanie folderu.
 
 ### 3. Zakończenie
-Po wyświetleniu komunikatu **„ZAINSTALOWANO POMYSLNIE"** uruchom grę.
+Po wyświetleniu zielonej ramki **„MOD ZAINSTALOWANY POMYSLNIE"** uruchom grę.
+
+> **Wskazówka:** możesz pominąć menu, podając argument: `installer.py /install` lub `installer.py /uninstall`.
 
 ---
 
 ## Komunikat „System Windows ochronił komputer"
-Komunikat pojawia się, ponieważ plik nie jest podpisany cyfrowo. Aby kontynuować, wybierz **„Więcej informacji"**, a następnie **„Uruchom mimo to"**.
+Komunikat może się pojawić, ponieważ plik nie jest podpisany cyfrowo. Aby kontynuować, wybierz **„Więcej informacji"**, a następnie **„Uruchom mimo to"**.
 
 ---
 
 ## Odinstalowanie
-Uruchom plik **`Zainstaluj.exe`** i wybierz opcję **Odinstaluj**.
+Uruchom instalator tak samo jak przy instalacji i wybierz opcję **Odinstaluj** (`2`). Mod zostanie usunięty, a gwizd wróci do oryginału.
 
 ---
 
@@ -45,6 +61,7 @@ Uruchom plik **`Zainstaluj.exe`** i wybierz opcję **Odinstaluj**.
 
 ## Wymagania
 - Gra **MECCHA CHAMELEON** na platformie Steam
-- System Windows 10 lub 11
+- System **Windows 10/11** lub **Linux**
+- **Python 3** (dla `Zainstaluj.bat` / `zainstaluj.sh`; w Windows alternatywnie samodzielny `Zainstaluj.exe`)
 
 <sub>Nieoficjalny mod fanowski. Mod można odinstalować w dowolnym momencie.</sub>
