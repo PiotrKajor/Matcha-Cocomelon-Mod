@@ -67,8 +67,6 @@ class C:
 
     # tla
     BG_GREEN = "\033[42m"
-    BG_RED = "\033[41m"
-    BG_BLACK = "\033[40m"
     BLACK = "\033[30m"
 
 
@@ -232,6 +230,7 @@ def _steam_roots_windows():
     for base in (pfx86, pf):
         roots.append(os.path.join(base, "Steam"))
     for drive in _windows_drives():
+        roots.append(drive)  # biblioteka moze byc wprost w korzeniu dysku (D:\steamapps\...)
         roots.append(os.path.join(drive, "Steam"))
         roots.append(os.path.join(drive, "SteamLibrary"))
         roots.append(os.path.join(drive, "Games", "Steam"))
