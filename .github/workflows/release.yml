@@ -1,0 +1,79 @@
+# Buduje MatchaCocomelonMod-Instalator.exe na Windowsie i dolacza go do GitHub Release.
+# Odpala sie na tag `v*` albo recznie (workflow_dispatch, opcjonalny input `tag`
+# tworzy tag+Release; bez niego powstaje tylko artefakt do pobrania z Actions).
+name: Release .exe
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Wersja release (np. v2.1.0); puste = tylko artefakt'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Zależności
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Smoke import GUI
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: python -c "import installer_gui, gui_theme; print('import OK')"
+
+      - name: PyInstaller
+        # --add-data "mod;mod": mod wbudowany w .exe (onefile) - jeden
+        # samowystarczalny plik; find_mod_dir() w installer.py sprawdza
+        # tez sys._MEIPASS, gdy program jest zamrozony.
+        run: >-
+          pyinstaller --noconfirm --clean --onefile --windowed
+          --name MatchaCocomelonMod-Instalator
+          --add-data "logo.png;."
+          --add-data "mod;mod"
+          installer_gui.py
+
+      - name: Artefakt buildu
+        uses: actions/upload-artifact@v4
+        with:
+          name: MatchaCocomelonMod-Instalator-exe
+          path: dist/MatchaCocomelonMod-Instalator.exe
+
+      - name: Release (tag push albo dispatch z inputem `tag`)
+        if: startsWith(github.ref, 'refs/tags/') || inputs.tag != ''
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"; TARGET=(--target "$GITHUB_SHA")
+          else
+            TAG="$GITHUB_REF_NAME"; TARGET=()
+          fi
+          cat > notes.md <<'EOF'
+          `MatchaCocomelonMod-Instalator.exe` — GUI instalator moda: jeden plik,
+          bez konsoli, mod wbudowany w środku (nie trzeba rozpakowywać ZIP-a).
+
+          - Windows 64-bit, zbudowany automatycznie przez GitHub Actions
+          - plik nie jest podpisany — SmartScreen może ostrzec
+            („Więcej informacji" → „Uruchom mimo to")
+          - alternatywa: terminalowy `Zainstaluj.bat` / `zainstaluj.sh` (patrz README)
+          EOF
+          gh release create "$TAG" "${TARGET[@]}" dist/MatchaCocomelonMod-Instalator.exe \
+              --title "Matcha Cocomelon Mod $TAG" \
+              --notes-file notes.md

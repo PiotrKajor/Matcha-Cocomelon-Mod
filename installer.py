@@ -191,12 +191,16 @@ def script_dir():
 
 
 def find_mod_dir():
-    """Szuka folderu 'mod' z plikami *_P.* obok skryptu."""
+    """Szuka folderu 'mod' z plikami *_P.* obok skryptu (lub w środku
+    zamrożonego .exe — PyInstaller onefile wypakowuje --add-data do _MEIPASS)."""
     base = script_dir()
     candidates = [
         os.path.join(base, "mod"),
         base,
     ]
+    frozen_base = getattr(sys, "_MEIPASS", None)
+    if frozen_base:
+        candidates.append(os.path.join(frozen_base, "mod"))
     for cand in candidates:
         if os.path.isdir(cand) and list_mod_files(cand):
             return cand
