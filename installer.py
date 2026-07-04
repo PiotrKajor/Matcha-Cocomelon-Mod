@@ -23,6 +23,13 @@ import string
 import platform
 
 # --------------------------------------------------------------------------- #
+#  Wersja
+# --------------------------------------------------------------------------- #
+# Jedno zrodlo prawdy dla nazwy wersji. Trafia do tytulu okna GUI oraz do nazw
+# plikow .exe (build.bat lokalnie, .github/workflows/release.yml uzywa tagu).
+APP_VERSION = "v2.1"
+
+# --------------------------------------------------------------------------- #
 #  Kolory / styl terminala (a la PassMark MemTest86)
 # --------------------------------------------------------------------------- #
 

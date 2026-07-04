@@ -12,6 +12,8 @@ Instalator GUI (Windows) + terminalowy, wieloplatformowy (Windows/Linux, Steam P
 &nbsp;
 ![Licencja](https://img.shields.io/badge/licencja-MIT-3ddc84?style=for-the-badge)
 
+<img src="icon.png" alt="Matcha Cocomelon Mod — logo / ikona" width="200">
+
 <img src="logo.png" alt="Matcha Cocomelon Mod" width="360">
 
 </div>
@@ -28,6 +30,7 @@ wyszukuje grę w bibliotekach Steam (Windows i Linux/Proton), kopiuje pliki moda
 
 - 🖥️ **GUI** (PySide6, ciemny motyw) — wykrywanie gry, przycisk „Przeglądaj…", log operacji,
   jeden samowystarczalny `.exe` (mod wbudowany w środku, bez rozpakowywania ZIP-a).
+  Program i plik `.exe` mają własną ikonę (`icon.png` / `icon.ico`, to samo logo co u góry).
 - ⌨️ **Terminalowy instalator** (`installer.py`) — retro wygląd testu pamięci (zielona ramka
   **OK**, czerwona **ERROR**), działa na Windows i Linux bez zależności spoza stdlib.
 - 🔍 **Auto-wykrywanie Steam** — rejestr (Windows) / typowe ścieżki (Linux), parsowanie
@@ -39,7 +42,8 @@ wyszukuje grę w bibliotekach Steam (Windows i Linux/Proton), kopiuje pliki moda
 
 ## Szybki start (Windows, GUI)
 
-1. Pobierz **`MatchaCocomelonMod-Instalator.exe`** z [zakładki Releases](../../releases/latest).
+1. Pobierz **`MatchaCocomelonMod-Instalator-v2.1.exe`** (nazwa zawiera wersję)
+   z [zakładki Releases](../../releases/latest).
 2. Uruchom. Plik nie jest podpisany, więc SmartScreen może ostrzec —
    „Więcej informacji" → „Uruchom mimo to".
 3. Program sam wykryje folder gry; jeśli nie, kliknij **Przeglądaj…** i wskaż folder
@@ -53,7 +57,7 @@ Alternatywa bez GUI, wieloplatformowa (Windows / Linux Steam Proton):
 1. Pobierz archiwum ZIP z [Releases](../../releases/latest) i wypakuj **całą zawartość**
    do jednego folderu — obok instalatora musi być folder `mod`.
 2. **Windows:** dwuklik na `Zainstaluj.bat` (wymaga Pythona 3 w PATH) albo samodzielny
-   `Zainstaluj.exe`. **Linux:** `./zainstaluj.sh` (lub `python3 installer.py`).
+   `Zainstaluj-v2.1.exe`. **Linux:** `./zainstaluj.sh` (lub `python3 installer.py`).
 3. Wybierz **Zainstaluj** (`1`) — instalator sam znajdzie grę albo poprosi o wskazanie folderu.
 
 Pominięcie menu: `installer.py /install` lub `installer.py /uninstall`.
@@ -69,9 +73,10 @@ venv/bin/python installer_gui.py           # Windows: venv\Scripts\python
 ### Zbudowanie własnego `.exe`
 
 Na Windowsie z Pythonem 3.10+ w PATH wystarczy `build.bat`. Wynik:
-`dist\MatchaCocomelonMod-Instalator.exe` — jeden plik, mod wbudowany w środku
-(`--add-data "mod;mod"`), bez konsoli. Wersje release'owe buduje GitHub Actions
-(`.github/workflows/release.yml`) po pushu taga `v*`.
+`dist\MatchaCocomelonMod-Instalator-v2.1.exe` — jeden plik (nazwa zawiera wersję),
+mod wbudowany w środku (`--add-data "mod;mod"`), z ikoną `icon.ico` i bez konsoli.
+Wersje release'owe buduje GitHub Actions (`.github/workflows/release.yml`) po pushu
+taga `v*` — nazwa `.exe` przejmuje wtedy wersję z tagu.
 
 ---
 

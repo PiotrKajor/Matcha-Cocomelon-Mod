@@ -14,7 +14,7 @@ import shutil
 import sys
 
 from installer import (
-    GAME_NAME, detect_paks_dir, find_mod_dir, list_mod_files,
+    APP_VERSION, GAME_NAME, detect_paks_dir, find_mod_dir, list_mod_files,
     resolve_paks_from_user_path,
 )
 from gui_theme import build_qss, GREEN, RED, YELLOW
@@ -35,11 +35,15 @@ def resource_path(name):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Matcha Cocomelon Mod — Instalator")
+        self.setWindowTitle(f"Matcha Cocomelon Mod — Instalator {APP_VERSION}")
         self.resize(720, 500)
-        logo = resource_path("logo.png")
-        if os.path.exists(logo):
-            self.setWindowIcon(QIcon(logo))
+        # Ikona okna/programu: preferuj kwadratowa ikonke (icon.png / icon.ico),
+        # z awaryjnym powrotem do starego logo.png.
+        for name in ("icon.png", "icon.ico", "logo.png"):
+            path = resource_path(name)
+            if os.path.exists(path):
+                self.setWindowIcon(QIcon(path))
+                break
 
         self.mod_dir = find_mod_dir()
         self.mod_files = list_mod_files(self.mod_dir) if self.mod_dir else []
