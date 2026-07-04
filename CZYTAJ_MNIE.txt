@@ -18,7 +18,7 @@ INSTALACJA
      WINDOWS:
        - dwuklik na Zainstaluj.bat  (wymaga Pythona 3 z python.org;
          przy instalacji zaznacz "Add Python to PATH"),
-       - albo uruchom Zainstaluj.exe (nie wymaga Pythona).
+       - albo uruchom Zainstaluj-v2.1.exe (nie wymaga Pythona).
 
      LINUX (w terminalu w folderze moda):
        ./zainstaluj.sh
