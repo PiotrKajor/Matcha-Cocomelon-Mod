@@ -618,7 +618,7 @@ def _button(label, focused):
 
 
 def _draw_header(tw):
-    title = " MATCHA COCOMELON MOD  —  INSTALATOR v2.0 "
+    title = f" MATCHA COCOMELON MOD  —  INSTALATOR {APP_VERSION} "
     bar = C.BG_GREEN + C.BLACK + C.BOLD + title.center(44) + C.RESET
     print()
     _print_centered(bar, 44, tw)

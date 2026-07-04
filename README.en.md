@@ -59,7 +59,7 @@ A cross-platform alternative without a GUI (Windows / Linux Steam Proton):
 1. Download the ZIP archive from [Releases](../../releases/latest) and extract **all of its
    contents** into a single folder — the `mod` folder must sit next to the installer.
 2. **Windows:** double-click `Zainstaluj.bat` (requires Python 3 in PATH) or the standalone
-   `Zainstaluj-v2.2.exe`. **Linux:** `./zainstaluj.sh` (or `python3 installer.py`).
+   `Zainstaluj.exe`. **Linux:** `./zainstaluj.sh` (or `python3 installer.py`).
 3. Choose **Install** (`1`) — the installer will find the game itself or ask you to point it
    at the folder.
 

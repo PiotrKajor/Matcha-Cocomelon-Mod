@@ -57,7 +57,7 @@ Alternatywa bez GUI, wieloplatformowa (Windows / Linux Steam Proton):
 1. Pobierz archiwum ZIP z [Releases](../../releases/latest) i wypakuj **całą zawartość**
    do jednego folderu — obok instalatora musi być folder `mod`.
 2. **Windows:** dwuklik na `Zainstaluj.bat` (wymaga Pythona 3 w PATH) albo samodzielny
-   `Zainstaluj-v2.2.exe`. **Linux:** `./zainstaluj.sh` (lub `python3 installer.py`).
+   `Zainstaluj.exe`. **Linux:** `./zainstaluj.sh` (lub `python3 installer.py`).
 3. Wybierz **Zainstaluj** (`1`) — instalator sam znajdzie grę albo poprosi o wskazanie folderu.
 
 Pominięcie menu: `installer.py /install` lub `installer.py /uninstall`.
