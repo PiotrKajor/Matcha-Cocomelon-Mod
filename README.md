@@ -20,7 +20,7 @@ Instalator GUI (Windows) + terminalowy, wieloplatformowy (Windows/Linux, Steam P
 
 ---
 
-## Co to robi
+## Co to robi?
 
 Podmienia dźwięk gwizdu bohatera w **MECCHA CHAMELEON** na „widzisz mnie?". Instalator sam
 wyszukuje grę w bibliotekach Steam (Windows i Linux/Proton), kopiuje pliki moda do folderu
