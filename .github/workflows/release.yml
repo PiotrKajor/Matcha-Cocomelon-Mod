@@ -1,4 +1,4 @@
-# Buduje MatchaCocomelonMod-Instalator.exe na Windowsie i dolacza go do GitHub Release,
+# Buduje MatchaCocomelonMod-Instalator-<tag>.exe na Windowsie i dolacza go do GitHub Release,
 # razem z ZIP-em "pack" (mod + instalator terminalowy) do samodzielnego pobrania.
 # Odpala sie na tag `v*` albo recznie (workflow_dispatch, opcjonalny input `tag`
 # tworzy tag+Release; bez niego powstaje tylko artefakt do pobrania z Actions).
@@ -28,12 +28,15 @@ jobs:
         shell: bash
         run: |
           if [ -n "${{ inputs.tag }}" ]; then
-            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+            TAG="${{ inputs.tag }}"
           elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            TAG="${{ github.ref_name }}"
           else
-            echo "tag=dev" >> "$GITHUB_OUTPUT"
+            TAG="dev"
           fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          # Nazwa .exe zawiera wersje (tag), np. MatchaCocomelonMod-Instalator-v2.1
+          echo "exe=MatchaCocomelonMod-Instalator-$TAG" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-python@v5
         with:
@@ -53,10 +56,13 @@ jobs:
         # --add-data "mod;mod": mod wbudowany w .exe (onefile) - jeden
         # samowystarczalny plik; find_mod_dir() w installer.py sprawdza
         # tez sys._MEIPASS, gdy program jest zamrozony.
+        # --icon icon.ico: ikona programu; --name z wersja (tagiem).
         run: >-
           pyinstaller --noconfirm --clean --onefile --windowed
-          --name MatchaCocomelonMod-Instalator
+          --name ${{ steps.tag.outputs.exe }}
+          --icon icon.ico
           --add-data "logo.png;."
+          --add-data "icon.png;."
           --add-data "mod;mod"
           installer_gui.py
 
@@ -67,7 +73,7 @@ jobs:
           $name = "Matcha-Cocomelon-Mod-${{ steps.tag.outputs.tag }}"
           $dest = "pack/$name"
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
-          Copy-Item Zainstaluj.exe,Zainstaluj.bat,zainstaluj.sh,installer.py,README.md,CZYTAJ_MNIE.txt,logo.png -Destination $dest
+          Copy-Item Zainstaluj-v2.1.exe,Zainstaluj.bat,zainstaluj.sh,installer.py,README.md,CZYTAJ_MNIE.txt,logo.png,icon.png -Destination $dest
           Copy-Item -Recurse mod "$dest/mod"
           Compress-Archive -Path $dest -DestinationPath "$name.zip"
           echo "zip=$name.zip" >> $env:GITHUB_OUTPUT
@@ -76,7 +82,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MatchaCocomelonMod-Instalator-exe
-          path: dist/MatchaCocomelonMod-Instalator.exe
+          path: dist/${{ steps.tag.outputs.exe }}.exe
 
       - name: Artefakt buildu (pack ZIP)
         uses: actions/upload-artifact@v4
@@ -91,23 +97,25 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           INPUT_TAG: ${{ inputs.tag }}
           ZIP_NAME: ${{ steps.pack.outputs.zip }}
+          EXE_NAME: ${{ steps.tag.outputs.exe }}
         run: |
           if [ -n "$INPUT_TAG" ]; then
             TAG="$INPUT_TAG"; TARGET=(--target "$GITHUB_SHA")
           else
             TAG="$GITHUB_REF_NAME"; TARGET=()
           fi
-          cat > notes.md <<'EOF'
-          `MatchaCocomelonMod-Instalator.exe` — GUI instalator moda: jeden plik,
-          bez konsoli, mod wbudowany w środku (nie trzeba rozpakowywać ZIP-a).
+          cat > notes.md <<EOF
+          \`${EXE_NAME}.exe\` — GUI instalator moda: jeden plik, bez konsoli,
+          mod wbudowany w środku (nie trzeba rozpakowywać ZIP-a). Nazwa pliku
+          zawiera wersję (\`$TAG\`).
 
           - Windows 64-bit, zbudowany automatycznie przez GitHub Actions
           - plik nie jest podpisany — SmartScreen może ostrzec
             („Więcej informacji" → „Uruchom mimo to")
           - alternatywa (na wypadek problemów z .exe albo dla Linuksa): ZIP z
-            instalatorem terminalowym `Zainstaluj.bat` / `zainstaluj.sh` (patrz README)
+            instalatorem terminalowym \`Zainstaluj.bat\` / \`zainstaluj.sh\` (patrz README)
           EOF
           gh release create "$TAG" "${TARGET[@]}" \
-              dist/MatchaCocomelonMod-Instalator.exe "$ZIP_NAME" \
+              "dist/${EXE_NAME}.exe" "$ZIP_NAME" \
               --title "Matcha Cocomelon Mod $TAG" \
               --notes-file notes.md
