@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎵 Matcha Cocomelon Mod
+# <img src="icon.png" alt="Matcha Cocomelon Mod — logo" width="40" align="top"> Matcha Cocomelon Mod
 
 **Mod do gry MECCHA CHAMELEON — zmienia dźwięk gwizdu na „widzisz mnie?".**
 
@@ -11,8 +11,6 @@ Instalator GUI (Windows) + terminalowy, wieloplatformowy (Windows/Linux, Steam P
 ![Platforma](https://img.shields.io/badge/Windows%20%7C%20Linux-2a3245?style=for-the-badge)
 &nbsp;
 ![Licencja](https://img.shields.io/badge/licencja-MIT-3ddc84?style=for-the-badge)
-
-<img src="icon.png" alt="Matcha Cocomelon Mod — logo / ikona" width="200">
 
 <img src="logo.png" alt="Matcha Cocomelon Mod" width="360">
 
