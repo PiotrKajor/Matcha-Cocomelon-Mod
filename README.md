@@ -1,5 +1,7 @@
 <div align="center">
 
+<sub><b>Polski</b> · <a href="README.en.md">English</a></sub>
+
 # <img src="icon.png" alt="Matcha Cocomelon Mod — logo" width="40" align="top"> Matcha Cocomelon Mod
 
 **Mod do gry MECCHA CHAMELEON — zmienia dźwięk gwizdu na „widzisz mnie?".**
