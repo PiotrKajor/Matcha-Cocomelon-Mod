@@ -1,5 +1,5 @@
 @echo off
-REM Build MatchaCocomelonMod-Instalator-v2.1.exe (PyInstaller onefile, bez konsoli).
+REM Build MatchaCocomelonMod-Instalator-v2.2.exe (PyInstaller onefile, bez konsoli).
 REM Wymagania: Python 3.10+ w PATH (launcher `py`). Uruchom z katalogu repo.
 
 setlocal
@@ -21,7 +21,7 @@ REM installer.py sprawdza tez sys._MEIPASS, gdy program jest zamrozony.
 REM --icon icon.ico: ikona programu (.exe). Nazwa pliku zawiera wersje
 REM (APP_VERSION w installer.py); wersje release'owe uzywaja tagu (release.yml).
 pyinstaller --noconfirm --clean --onefile --windowed ^
-    --name MatchaCocomelonMod-Instalator-v2.1 ^
+    --name MatchaCocomelonMod-Instalator-v2.2 ^
     --icon icon.ico ^
     --add-data "logo.png;." ^
     --add-data "icon.png;." ^
@@ -29,7 +29,7 @@ pyinstaller --noconfirm --clean --onefile --windowed ^
     installer_gui.py || goto :error
 
 echo.
-echo Gotowe: dist\MatchaCocomelonMod-Instalator-v2.1.exe
+echo Gotowe: dist\MatchaCocomelonMod-Instalator-v2.2.exe
 exit /b 0
 
 :error

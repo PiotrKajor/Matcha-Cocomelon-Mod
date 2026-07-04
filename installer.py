@@ -27,7 +27,7 @@ import platform
 # --------------------------------------------------------------------------- #
 # Jedno zrodlo prawdy dla nazwy wersji. Trafia do tytulu okna GUI oraz do nazw
 # plikow .exe (build.bat lokalnie, .github/workflows/release.yml uzywa tagu).
-APP_VERSION = "v2.1"
+APP_VERSION = "v2.2"
 
 # --------------------------------------------------------------------------- #
 #  Kolory / styl terminala (a la PassMark MemTest86)
@@ -133,7 +133,7 @@ def hr(char="-"):
 
 def banner(title):
     clear_screen()
-    head = " Matcha Cocomelon Mod  -  Instalator v2.0 "
+    head = f" Matcha Cocomelon Mod  -  Instalator {APP_VERSION} "
     print(f"{C.BG_GREEN}{C.BLACK}{C.BOLD}{head:<{WIDTH}}{C.RESET}")
     print(f"{C.CYAN}{title:<{WIDTH}}{C.RESET}")
     hr("=")

@@ -42,7 +42,7 @@ wyszukuje grę w bibliotekach Steam (Windows i Linux/Proton), kopiuje pliki moda
 
 ## Szybki start (Windows, GUI)
 
-1. Pobierz **`MatchaCocomelonMod-Instalator-v2.1.exe`** (nazwa zawiera wersję)
+1. Pobierz **`MatchaCocomelonMod-Instalator-v2.2.exe`** (nazwa zawiera wersję)
    z [zakładki Releases](../../releases/latest).
 2. Uruchom. Plik nie jest podpisany, więc SmartScreen może ostrzec —
    „Więcej informacji" → „Uruchom mimo to".
@@ -57,7 +57,7 @@ Alternatywa bez GUI, wieloplatformowa (Windows / Linux Steam Proton):
 1. Pobierz archiwum ZIP z [Releases](../../releases/latest) i wypakuj **całą zawartość**
    do jednego folderu — obok instalatora musi być folder `mod`.
 2. **Windows:** dwuklik na `Zainstaluj.bat` (wymaga Pythona 3 w PATH) albo samodzielny
-   `Zainstaluj-v2.1.exe`. **Linux:** `./zainstaluj.sh` (lub `python3 installer.py`).
+   `Zainstaluj-v2.2.exe`. **Linux:** `./zainstaluj.sh` (lub `python3 installer.py`).
 3. Wybierz **Zainstaluj** (`1`) — instalator sam znajdzie grę albo poprosi o wskazanie folderu.
 
 Pominięcie menu: `installer.py /install` lub `installer.py /uninstall`.
@@ -73,7 +73,7 @@ venv/bin/python installer_gui.py           # Windows: venv\Scripts\python
 ### Zbudowanie własnego `.exe`
 
 Na Windowsie z Pythonem 3.10+ w PATH wystarczy `build.bat`. Wynik:
-`dist\MatchaCocomelonMod-Instalator-v2.1.exe` — jeden plik (nazwa zawiera wersję),
+`dist\MatchaCocomelonMod-Instalator-v2.2.exe` — jeden plik (nazwa zawiera wersję),
 mod wbudowany w środku (`--add-data "mod;mod"`), z ikoną `icon.ico` i bez konsoli.
 Wersje release'owe buduje GitHub Actions (`.github/workflows/release.yml`) po pushu
 taga `v*` — nazwa `.exe` przejmuje wtedy wersję z tagu.
